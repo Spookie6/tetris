@@ -1,3 +1,2 @@
-x = 1
-
-if x is not None: print("j")
+set = {1, 2, 3}
+print(max(set))
