@@ -3,6 +3,7 @@ import random, datetime
 
 from pos import Pos
 from constants import Constants
+from tilemap import Tile
 
 class Tetromino():
 	def __init__(self, game, shape):
@@ -21,17 +22,32 @@ class Tetromino():
   
 	def update(self, keys) -> None:
 		now = datetime.datetime.now().timestamp()
-  
+
 		self.update_extreme_values()
-  
+
 		interval = .05 if keys[pg.K_s] else Constants.UPDATE_INTERVAL_VERTI
 
 		if now - self.last_update_vert >= interval:
 			self.last_update_vert = now
 			self.pos.y += 1
-			if self.extreme_values[1].y == len(self.game.tilemap.tilemap) - 1:
-				self.game.tilemap.add_tetromino(self)
-				self.game.new_tetromino()
+			self.update_extreme_values()
+  
+		distances = set()
+		for pos in self.shape:
+			vertical_tiles = set(map(lambda x : x if isinstance(x, int) else x.pos.y, self.game.tilemap.get_vertical(pos.add(self.pos).x)))
+			# print(vertical_tiles)
+			closest_vertical_tile = min(vertical_tiles)
+   
+			distance = closest_vertical_tile.pos.y - pos.add(self.pos).y if isinstance(closest_vertical_tile, Tile) else closest_vertical_tile - pos.add(self.pos).y
+			distances.add(distance)
+
+		print("dis", min(distances))
+
+		if self.extreme_values[1].y >= len(self.game.tilemap.tilemap) - 1:
+			extreme_values_shape = Pos.extreme_values(self.shape)
+			self.pos.y = (len(self.game.tilemap.tilemap) - 1) - extreme_values_shape[1].y
+			self.game.tilemap.add_tetromino(self)
+			self.game.new_tetromino()
 
 		left = keys[pg.K_a]
 		right = keys[pg.K_d]
