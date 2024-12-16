@@ -3,7 +3,7 @@ from pos import Pos
 class Constants:
 	RESOLUTION = (1920,1080)
 	FONT = None
-	TILE_SIZE = 54
+	TILE_SIZE = 32
 	UPDATE_INTERVAL_VERTI = .5 # Tetromino movement interval vertical (- in seconds)
 	UPDATE_INTERVAL_HORI = .1 # Tetromino movement interval horizontaly (- in seconds)
 

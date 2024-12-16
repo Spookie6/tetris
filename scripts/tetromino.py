@@ -32,20 +32,28 @@ class Tetromino():
 			self.pos.y += 1
 			self.update_extreme_values()
   
+		already_searched = set()
 		distances = set()
 		for pos in self.shape:
-			vertical_tiles = set(map(lambda x : x if isinstance(x, int) else x.pos.y, self.game.tilemap.get_vertical(pos.add(self.pos).x)))
-			# print(vertical_tiles)
+			if pos.x in already_searched: continue
+			else: already_searched.add(pos.x)
+	
+			in_tilemap_pos = pos.add(self.pos)
+  
+			vertical_tiles = set(map(lambda x : x if isinstance(x, int) else x.pos.y, self.game.tilemap.get_vertical(in_tilemap_pos.x)))
+			# vertical_tiles = list(filter(lambda x : x.))
 			closest_vertical_tile = min(vertical_tiles)
    
-			distance = closest_vertical_tile.pos.y - pos.add(self.pos).y if isinstance(closest_vertical_tile, Tile) else closest_vertical_tile - pos.add(self.pos).y
+			y = closest_vertical_tile.pos.y if isinstance(closest_vertical_tile, Tile) else closest_vertical_tile
+			distance = y - in_tilemap_pos.y
+   
 			distances.add(distance)
 
 		print("dis", min(distances))
 
-		if self.extreme_values[1].y >= len(self.game.tilemap.tilemap) - 1:
+		if min(distances) == 1:
 			extreme_values_shape = Pos.extreme_values(self.shape)
-			self.pos.y = (len(self.game.tilemap.tilemap) - 1) - extreme_values_shape[1].y
+			# self.pos.y = (len(self.game.tilemap.tilemap) - 1) - extreme_values_shape[1].y
 			self.game.tilemap.add_tetromino(self)
 			self.game.new_tetromino()
 

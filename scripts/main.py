@@ -14,7 +14,8 @@ class Game():
 		Constants.FONT = pg.font.Font("RetroFont.ttf", 32)
 
 		pg.display.set_caption("Tetris")
-		self.screen = pg.display.set_mode((Constants.RESOLUTION), pg.FULLSCREEN, display=1)
+		self.screen = pg.display.set_mode((1280, 720), pg.SHOWN, display=0)
+		self.display = pg.Surface(Constants.RESOLUTION)
   
 		self.clock = pg.time.Clock()
   
@@ -44,27 +45,30 @@ class Game():
 					if event.key == pg.K_w:
 						self.tetromino.rotate()
 			
-			self.screen.fill("black")
+			self.display.fill("black")
 		
 			self.tetromino.update(keys)
 			
-			pg.draw.rect(self.screen, pg.Color("gray2"), self.rect)
-			self.tilemap.render(self.screen)
+			pg.draw.rect(self.display, pg.Color("gray2"), self.rect)
+			self.tilemap.render(self.display)
 	
-			self.tilemap.render_tetromino(self.screen)
+			self.tilemap.render_tetromino(self.display)
+ 
+			disp = pg.transform.scale(self.display, (1280, 720))
+			self.screen.blit(disp, (0, 0))
  
 			pg.display.flip()
 
 			dt = self.clock.tick(60) / 1000  # limits FPS to 60
 
 	def render(self):
-		pg.draw.rect(self.screen, pg.Color("gray2"), self.rect)
-		self.tilemap.render(self.screen)
+		pg.draw.rect(self.display, pg.Color("gray2"), self.rect)
+		self.tilemap.render(self.display)
 
 		# Line surrounding the gameboard
 		# x, y, w, h, = self.rect
-		# pg.draw.line(self.screen, pg.Color("gray6"), (x - 1, y), (x - 1, h), width=4)
-		# pg.draw.line(self.screen, pg.Color("gray6"), (x + w + 1, y), (x + w + 1, h), width=4)
+		# pg.draw.line(self.display, pg.Color("gray6"), (x - 1, y), (x - 1, h), width=4)
+		# pg.draw.line(self.display, pg.Color("gray6"), (x + w + 1, y), (x + w + 1, h), width=4)
   
 	def new_tetromino(self):
 		self.tetromino = Tetromino.random(self)
